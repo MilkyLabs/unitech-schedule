@@ -17,7 +17,23 @@ DAYS = {
 }
 
 SUBJECT_EMOJI ={
-    "[Мм]атем": "🤮"
+    "[Мм]атем": "🤮",
+    "[Фф]изич": "👩‍🦽",
+    "Архитектура вычислительных систем": "🧮",
+    ".": "🔺",
+}
+
+SUBJECT_ABBREVIATION = {
+    "Математический анализ": "Мат. анализ",
+    "Основы алгоритмизации и программирования": "ОАиП",
+    "Архитектура вычислительных систем": "Архитектура ВС",
+    "Физическая культура": "Физ-ра",
+}
+SUBJECT_FORM_ABBREVIATION = {
+    "Практическое занятие": "практика",
+    "Практическое занятие(Д)": "практика дистант",
+    "Лекция": "лекция",
+    "Лекция(Д)": "лекция дистант",
 }
 
 def format_subject(subject: str) -> str:
@@ -27,15 +43,34 @@ def format_subject(subject: str) -> str:
         if (r.match(subject)):
             emoji = SUBJECT_EMOJI[key]
             break
-    return f"{subject} {emoji}" 
+    split_subject = subject.split(" - ")
+    subject = split_subject[0]
+    form = split_subject[1]
+
+    subject = SUBJECT_ABBREVIATION[subject] if SUBJECT_ABBREVIATION.get(subject) else subject
+    form = SUBJECT_FORM_ABBREVIATION[form] if SUBJECT_FORM_ABBREVIATION.get(form) else form
+
+    return f"{html.bold(subject)} {emoji} - {html.underline(form)}" 
+
+def format_room(room: str) -> str:
+
+    if ("Дистанционная" in room):
+        return ""
+
+    return f"{html.italic(' - ' + room + ' каб.')}"
+
+def format_lesson(lesson) -> str:
+    formatted = f"◦ {lesson['number']}-я пара {format_subject(lesson['subject'])} {format_room(lesson['room'])}\n"
+    logging.info(formatted)
+    return formatted
 
 
 def format_day_time_table(time_table) -> str:
-    logging.info(time_table['date'])
     weekday = DAYS[dateutil.parser.parse(time_table['date']).weekday()]
     message = f"🗓 Расписание на {html.bold(time_table['date'])} ({weekday})\n\n"
 
     for lesson in time_table['lessons']:
-        message += f"🔘 {lesson['number']}-я пара {format_subject(lesson['subject'])} {html.italic(lesson['room'] + ' каб.')}\n"
+        message += format_lesson(lesson)
 
     return message
+
