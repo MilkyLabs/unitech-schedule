@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import schedule_parser
-from args import Args
+import parser.schedule_parser as schedule_parser
+from cli.args import Args
 import datetime
 
 def print_day_schedule(schedule):

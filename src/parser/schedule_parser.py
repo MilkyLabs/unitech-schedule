@@ -1,4 +1,4 @@
-from models import DaySchedule, LessonInfo
+from core.models import DaySchedule, LessonInfo
 from bs4 import BeautifulSoup
 from sys import stderr
 import datetime

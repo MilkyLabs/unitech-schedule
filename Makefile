@@ -1,4 +1,4 @@
-parser_exe := main.py
+parser_exe := src/main.py
 
 all:
 	@echo "Go fuck yourself"
