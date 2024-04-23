@@ -17,9 +17,10 @@ DAYS = {
 }
 
 SUBJECT_EMOJI ={
-    "[Мм]атем": "🤮",
-    "[Фф]изич": "👩‍🦽",
+    "[.]*[Мм]атем[.]*": "🤮",
+    "[.]*[Фф]изич[.]*": "👩‍🦽",
     "Архитектура вычислительных систем": "🧮",
+    "[.]*[Пп]рогр[.]*": "👨‍💻", # TODO: fix, currently not working regex
     ".": "🔺",
 }
 
@@ -38,11 +39,15 @@ SUBJECT_FORM_ABBREVIATION = {
 
 def format_subject(subject: str) -> str:
     emoji = ""
+    # logging.info(subject)
     for key in SUBJECT_EMOJI.keys():
+        # logging.info(f"Key and emoji {key}")
         r = regex.compile(key)
         if (r.match(subject)):
             emoji = SUBJECT_EMOJI[key]
+            # logging.info(f"Key and emoji {key}, {emoji}")
             break
+    
     split_subject = subject.split(" - ")
     subject = split_subject[0]
     form = split_subject[1]
@@ -61,7 +66,7 @@ def format_room(room: str) -> str:
 
 def format_lesson(lesson) -> str:
     formatted = f"◦ {lesson['number']}-я пара {format_subject(lesson['subject'])} {format_room(lesson['room'])}\n"
-    logging.info(formatted)
+    # logging.info(formatted)
     return formatted
 
 
