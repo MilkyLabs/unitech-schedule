@@ -1,4 +1,5 @@
 parser_exe := src/main.py
+bot_exe := src/bot.py
 
 all:
 	@echo "Go fuck yourself"
@@ -6,11 +7,20 @@ all:
 run: $(parser_exe)
 	python $(parser_exe)
 
-ifneq ($(OS),Windows_NT) 
 setup: $(parser_exe)
+ifneq ($(OS),Windows_NT) 
 	@echo "Make $(parser_exe) executable"
 	@chmod +x $(parser_exe)
 endif
 
+	@echo "Install pip packages"
+	@pip install beautifulsoup4
+	@pip install aiogram
+
 clear:
 	rm -rf __pycache__/
+
+include .env
+
+run-bot: $(bot_exe) .env
+	@python $(bot_exe)
