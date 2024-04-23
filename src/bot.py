@@ -3,6 +3,8 @@ import datetime
 import sys
 import logging
 import telegram.formatting as fmt
+import telegram.markups as markups
+from telegram.commands import *
 import parser.time_table as tt
 from os import getenv
 from aiogram import Bot, Dispatcher, html
@@ -20,31 +22,23 @@ dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def start(message: Message):
-    kb = [[
-        KeyboardButton(text="/на_сегодня"),
-        KeyboardButton(text="/на_неделю"),
-        KeyboardButton(text="/на_завтра"),
-    ]]
-    markup = ReplyKeyboardMarkup(
-        keyboard=kb,
-        resize_keyboard=True,
-        input_field_placeholder="Выберите команду")
+    
 
-    await message.answer(f"Hello {html.italic(message.from_user.full_name)}", reply_markup=markup)
+    await message.answer(f"Hello {html.italic(message.from_user.full_name)}", reply_markup=markups.MAIN_MARKUP)
 
 
-@dp.message(Command("на_неделю"))
+@dp.message(Command(THIS_WEEK_TIMETABLE_COMMAND))
 async def start(message: Message):
     await message.answer(f"{html.code('week command')}")
 
 
-@dp.message(Command("на_сегодня"))
+@dp.message(Command(TODAY_TIMETABLE_COMMAND))
 async def start(message: Message):
     time_table = tt.get_time_table()['days'][datetime.date.today().weekday()]
     answer = fmt.format_day_time_table(time_table)
     await message.answer(answer) 
 
-@dp.message(Command("на_завтра"))
+@dp.message(Command(TOMORROW_TIMETABLE_COMMAND))
 async def start(message: Message):
     time_table = tt.get_time_table()['days'][datetime.date.today().weekday() + 1] # TODO: fix index out of range error
     answer = fmt.format_day_time_table(time_table)
