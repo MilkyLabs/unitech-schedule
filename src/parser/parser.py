@@ -19,7 +19,7 @@ def parse_time_table_html(url: str) -> WeekTimeTable:
 
         if response.status_code != 200:
             print("Status code:", response.status_code, file=stderr)
-            return
+            return {}
 
         result = WeekTimeTable()
 
