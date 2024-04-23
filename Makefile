@@ -18,7 +18,7 @@ endif
 	@pip install aiogram
 
 clear:
-	rm -rf __pycache__/
+	rm -rf __pycache__/ .cache
 
 include .env
 
