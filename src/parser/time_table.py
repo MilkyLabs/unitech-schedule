@@ -14,5 +14,5 @@ def get_time_table() -> WeekTimeTable:
     if (not is_cached()):
         make_cache()
 
-    return json.loads(pathlib.Path(CACHE_FILE).read_text())
+    return json.loads(pathlib.Path(TIMETABLE_CACHE_FILE).read_text())
 
