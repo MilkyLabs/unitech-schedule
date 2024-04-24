@@ -13,13 +13,13 @@ class Group:
         self.name = name
         self.link = link
 
-GROUPS_URL = "https://ies.unitech-mo.ru/schedule_list_groups?f={form}"
-
+GROUPS_URL      = "https://ies.unitech-mo.ru/schedule_list_groups?f={form}"
+GROUPS_FORMS    = [1, 3, 6]
 
 def parse():
     groups = []
 
-    for form in [1, 3, 6]:
+    for form in GROUPS_FORMS:
         with Session() as session:
             response = session.get(GROUPS_URL.format(form=form))
 
