@@ -3,6 +3,7 @@ import datetime
 from datetime import date as Date, timedelta as TimeDelta
 import sys
 import logging
+import parser.cache
 import telegram.formatting as fmt
 import telegram.markups as markups
 from telegram.commands import *
@@ -58,6 +59,7 @@ async def main() -> None:
     bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     # And the run events dispatching
     await dp.start_polling(bot)
+    parser.cache.ensure_cached()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)

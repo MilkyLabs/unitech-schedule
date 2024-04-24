@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import parser.groups
 import parser.timetable
@@ -31,15 +32,22 @@ def __make_timetables_cache(timetables):
     Path(__TIMETABLE_CACHE_FILE).write_text(json.dumps(timetables))
 
 def __make_cache():
+    log = logging.getLogger()
+    
+    log.info("Start making cache")
     cache_parent = Path(__TIMETABLE_CACHE_FILE).parent 
     if (not cache_parent.exists()):
+        log.info("Creating cache folder")
         os.mkdir(cache_parent.name)
     
     groups = parser.groups.parse()
+
+    log.info(f"End parsing groups, total: {len(groups)}")
+    
     
     timetables = {}
     for group in groups:
-        timetables[group.name] = parser.timetable.parse(group.url)
+        timetables[group.name] = parser.timetable.parse(group.link)
 
     __make_groups_cache(groups)
     __make_timetables_cache(timetables)

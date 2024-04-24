@@ -14,7 +14,7 @@ class Group:
         self.link = link
 
 GROUPS_URL      = "https://ies.unitech-mo.ru/schedule_list_groups?f={form}"
-GROUPS_FORMS    = [1, 3, 6]
+GROUPS_FORMS    = [1]#[1, 3, 6]
 
 def parse():
     groups = []
@@ -30,8 +30,8 @@ def parse():
             soup = BeautifulSoup(response.text, 'html.parser')
             rows = soup.find_all('tr')
 
-            for row in rows:
+            for row in rows[1:]:
                 cols = row.find_all('td')
-                groups.append(Group(cols[0].text, cols[1].attrs['href']))
+                groups.append(Group(cols[0].text, cols[1].find('a', href=True)['href']))
         
     return groups

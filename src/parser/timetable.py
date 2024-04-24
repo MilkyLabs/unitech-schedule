@@ -71,17 +71,19 @@ class WeekTimeTable(object):
             sort_keys=True)
 
 __DATE_FORMAT = "%d.%m.%Y"
+__BASE_URL = "https://ies.unitech-mo.ru/"
 
 def parse(url: str):
 
     period_urls =[
-        url + "&d=" + Date.today().strftime(__DATE_FORMAT),
-        url + "&d=" + (Date.today() + TimeDelta(weeks=1)).strftime(__DATE_FORMAT),
+        __BASE_URL + url + "&d=" + Date.today().strftime(__DATE_FORMAT),
+        __BASE_URL + url + "&d=" + (Date.today() + TimeDelta(weeks=1)).strftime(__DATE_FORMAT),
     ]
 
     current_date = utils.date.get_week_start(Date.today())
     result = {}
     for u in period_urls:
+        logging.info(f"Start parsing timetable for url {u}")
         with Session() as session:
             response = session.get(u)
 
@@ -107,5 +109,7 @@ def parse(url: str):
                         day_time_table.lessons.append(LessonInfo.create(columns))
 
                 result[current_date] = day_time_table
+        
+        logging.info(f"End parsing timetable")
         
         return result
