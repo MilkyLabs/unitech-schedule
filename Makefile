@@ -8,6 +8,9 @@ run: $(parser_exe)
 	python $(parser_exe)
 
 setup: $(parser_exe)
+	@echo "Pulling git repository"
+	@git pull
+
 ifneq ($(OS),Windows_NT) 
 	@echo "Make $(parser_exe) executable"
 	@chmod +x $(parser_exe)
