@@ -17,8 +17,7 @@ ifneq ($(OS),Windows_NT)
 endif
 
 	@echo "Install pip packages"
-	@pip install beautifulsoup4
-	@pip install aiogram
+	@pip install -r requirements.txt
 
 clear:
 	rm -rf __pycache__/ .cache
