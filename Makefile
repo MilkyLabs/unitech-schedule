@@ -1,11 +1,12 @@
 parser_exe := src/main.py
 bot_exe := src/bot.py
 
-all:
-	@echo "Go fuck yourself"
-
-run: $(parser_exe)
-	python $(parser_exe)
+help:
+	@echo "Unitech Timetable Bot Makefile"
+	@echo ""
+	@echo "\`make setup\`	-	setup this repository for work"
+	@echo "\`make run-bot\`	-	run telegram bot"
+	@echo "\`make clear\`	-	deletes all cache files"
 
 setup: $(parser_exe)
 	@echo "Pulling git repository"
