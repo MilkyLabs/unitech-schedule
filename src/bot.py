@@ -1,11 +1,12 @@
 import asyncio
 import datetime
+from datetime import date as Date, timedelta as TimeDelta
 import sys
 import logging
 import telegram.formatting as fmt
 import telegram.markups as markups
 from telegram.commands import *
-import parser.time_table as tt
+from repo.repository import Repository
 from os import getenv
 from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
@@ -29,20 +30,27 @@ async def start(message: Message):
 
 @dp.message(Command(THIS_WEEK_TIMETABLE_COMMAND))
 async def start(message: Message):
-    await message.answer(f"{html.code('week command')}")
+    await message.answer(f"{html.code('week command')}", reply_markup=markups.MAIN_MARKUP)
+
+
+@dp.message(Command(NEXT_WEEK_TIMETABLE_COMMAND))
+async def start(message: Message):
+    await message.answer(f"{html.code('week command')}", reply_markup=markups.MAIN_MARKUP)
 
 
 @dp.message(Command(TODAY_TIMETABLE_COMMAND))
 async def start(message: Message):
-    time_table = tt.get_time_table()['days'][datetime.date.today().weekday()]
-    answer = fmt.format_day_time_table(time_table)
-    await message.answer(answer) 
+    timetable = Repository().get_day_timetable(Date.today()) 
+    answer = fmt.format_day_time_table(timetable)
+    await message.answer(answer, reply_markup=markups.MAIN_MARKUP)
+
 
 @dp.message(Command(TOMORROW_TIMETABLE_COMMAND))
 async def start(message: Message):
-    time_table = tt.get_time_table()['days'][datetime.date.today().weekday() + 1] # TODO: fix index out of range error
-    answer = fmt.format_day_time_table(time_table)
-    await message.answer(answer)
+    timetable = Repository().get_day_timetable(Date.today() + TimeDelta(days=1))
+    answer = fmt.format_day_time_table(timetable)
+    await message.answer(answer, reply_markup=markups.MAIN_MARKUP)
+
 
 
 async def main() -> None:
