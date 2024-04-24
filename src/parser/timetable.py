@@ -1,9 +1,10 @@
 import logging
 from bs4 import BeautifulSoup
 from requests import Session
-from datetime import date
+from datetime import date as Date, timedelta as TimeDelta
 from core.models import WeekTimeTable
 from dataclasses import dataclass
+import utils.date
 import datetime
 import json
 
@@ -69,39 +70,42 @@ class WeekTimeTable(object):
             default=lambda o: o.__dict__,
             sort_keys=True)
 
-
-def get_week_start() -> date:
-    today = date.today()
-    return date(today.year, 
-                         today.month, 
-                         today.day - today.weekday())
+__DATE_FORMAT = "%d.%m.%Y"
 
 def parse(url: str):
-    with Session() as session:
-        response = session.get(url)
 
-        if response.status_code != 200:
-            logging.error(f"Status code {response.status_code} from url {url}")
-            return {}
+    period_urls =[
+        url + "&d=" + Date.today().strftime(__DATE_FORMAT),
+        url + "&d=" + (Date.today() + TimeDelta(weeks=1)).strftime(__DATE_FORMAT),
+    ]
 
-        result = WeekTimeTable()
+    current_date = utils.date.get_week_start(Date.today())
+    result = {}
+    for u in period_urls:
+        with Session() as session:
+            response = session.get(u)
 
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        current_date = get_week_start()
+            if response.status_code != 200:
+                logging.error(f"Status code {response.status_code} from url {url}")
+                return {}
 
-        tables = soup.find_all('table')
-        for t in tables:
-            day_time_table = DayTimeTable(current_date)
-            current_date = date(current_date.year, current_date.month, current_date.day + 1)
 
-            table_body = t.find('tbody')
-            rows = table_body.find_all('tr')
+            soup = BeautifulSoup(response.text, 'html.parser')
             
-            for r in rows:
-                columns = r.find_all('td')
-                if (columns[2].text != ""):
-                    day_time_table.lessons.append(LessonInfo.create(columns))
-            result.days.append(day_time_table)
+
+            tables = soup.find_all('table')
+            for t in tables:
+                day_time_table = DayTimeTable(current_date)
+                current_date = current_date + TimeDelta(days=1)
+
+                table_body = t.find('tbody')
+                rows = table_body.find_all('tr')
+                
+                for r in rows:
+                    columns = r.find_all('td')
+                    if (columns[2].text != ""):
+                        day_time_table.lessons.append(LessonInfo.create(columns))
+
+                result[current_date] = day_time_table
         
         return result
